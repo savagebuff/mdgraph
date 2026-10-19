@@ -1,0 +1,14 @@
+{
+  "name": "mdgraph",
+  "description": "Marketplace проекта mdgraph — долговременная память для AI-агентов в виде графа markdown-заметок.",
+  "owner": {
+    "name": "Dinar Garaev"
+  },
+  "plugins": [
+    {
+      "name": "mdgraph",
+      "source": "./plugin",
+      "description": "Долговременная память для AI-агентов: граф markdown-заметок с автозагрузкой карты знаний в начале сессии."
+    }
+  ]
+}

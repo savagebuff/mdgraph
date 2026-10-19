@@ -40,6 +40,40 @@ Homebrew/pyenv/системные пути; при необходимости м
 Путь к vault по умолчанию — `./vault`; переопределяется флагом `--vault`
 или переменной окружения `MDGRAPH_VAULT`.
 
+## Плагин Claude Code
+
+Опционально: плагин автоматизирует цикл памяти. SessionStart-хук кладёт
+карту знаний vault (`query index`) в контекст каждой сессии, Stop-хук
+напоминает сохранить итоги, если заметки не обновлялись больше 2 часов,
+скилл `vault-save` фиксирует результаты по правилам AGENTS.md.
+
+Требования: Python 3.9+ и `jq` (macOS: `brew install jq`).
+
+Из локального клона репозитория:
+
+    claude plugin marketplace add /путь/к/mdgraph
+    claude plugin install mdgraph@mdgraph
+
+С GitHub:
+
+    claude plugin marketplace add <owner>/mdgraph
+    claude plugin install mdgraph@mdgraph
+
+Затем укажите абсолютный путь к vault в `~/.claude/settings.json`:
+
+```json
+{
+  "env": { "MDGRAPH_VAULT": "/абсолютный/путь/к/vault" }
+}
+```
+
+Если vault ещё нет — создайте: `python3 mdgraph.py init /путь/к/vault`.
+Перезапустите Claude Code: в начале каждой сессии в контексте появится
+блок `[mdgraph] Карта знаний vault (автозагрузка)`.
+
+Без переменной `MDGRAPH_VAULT` хуки молча пропускают работу — плагин
+не мешает проектам без vault.
+
 ## Команды
 
     python mdgraph.py init [ПАПКА]                    # создать скелет vault + AGENTS.md

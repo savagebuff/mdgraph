@@ -1,0 +1,8 @@
+{
+  "name": "mdgraph",
+  "description": "Долговременная память для AI-агентов в виде графа markdown-заметок. SessionStart-хук автоматически загружает карту знаний vault (mdgraph query index) в контекст каждой сессии; Stop-хук напоминает о несохранённых итогах; скилл vault-save фиксирует результаты работы по правилам AGENTS.md. Путь к vault — через переменную окружения MDGRAPH_VAULT.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Dinar Garaev"
+  }
+}

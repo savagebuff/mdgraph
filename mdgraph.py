@@ -407,7 +407,8 @@ def cmd_init(args: argparse.Namespace) -> None:
         path = root / rel
         path.parent.mkdir(parents=True, exist_ok=True)
         if not path.exists():
-            path.write_text(content, encoding="utf-8", newline="\n")
+            with open(path, "w", encoding="utf-8", newline="\n") as f:  # newline= в write_text — только 3.10+
+                f.write(content)
     print(f"Vault создан: {root.resolve()}")
     print(f"Дальше: python mdgraph.py query index --depth 1 --vault {root.as_posix()}")
 

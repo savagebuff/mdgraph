@@ -1,0 +1,28 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "statusMessage": "mdgraph: загрузка карты знаний vault",
+            "timeout": 15,
+            "command": "[ -n \"$MDGRAPH_VAULT\" ] && python3 \"${CLAUDE_PLUGIN_ROOT}/mdgraph.py\" query index --depth 1 --vault \"$MDGRAPH_VAULT\" 2>/dev/null | jq -Rs --arg p \"${CLAUDE_PLUGIN_ROOT}/mdgraph.py\" --arg v \"$MDGRAPH_VAULT\" '{hookSpecificOutput:{hookEventName:\"SessionStart\",additionalContext:(\"[mdgraph] Карта знаний vault (автозагрузка). Скрипт: \" + $p + \" | vault: \" + $v + \"\\n\\n\" + .)}}'; true"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "statusMessage": "mdgraph: проверка свежести заметок",
+            "timeout": 10,
+            "command": "[ -n \"$MDGRAPH_VAULT\" ] && python3 -c '\nimport json, os, time\nnewest = 0.0\nfor root, dirs, files in os.walk(os.environ[\"MDGRAPH_VAULT\"]):\n    dirs[:] = [d for d in dirs if not d.startswith(\".\")]\n    for f in files:\n        if f.endswith(\".md\"):\n            try:\n                newest = max(newest, os.path.getmtime(os.path.join(root, f)))\n            except OSError:\n                pass\nif newest and time.time() - newest > 7200:\n    print(json.dumps({\"systemMessage\": \"mdgraph: заметки в vault не обновлялись более 2 часов — можно сохранить итоги сессии (скилл vault-save).\"}, ensure_ascii=False))\n'; true"
+          }
+        ]
+      }
+    ]
+  }
+}
