@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# mdgraph: запуск без зависимости от того, как в системе доступен Python (macOS/Linux).
+# Порядок поиска: $MDGRAPH_PYTHON → python3 → python → Homebrew/pyenv/системный python3.
+set -u
+
+DIR="$(cd "$(dirname "$0")" && pwd)"
+
+find_python() {
+  if [ -n "${MDGRAPH_PYTHON:-}" ] && [ -x "${MDGRAPH_PYTHON:-}" ]; then
+    printf '%s\n' "$MDGRAPH_PYTHON"; return 0
+  fi
+  for cand in python3 python \
+              /opt/homebrew/bin/python3 \
+              /usr/local/bin/python3 \
+              "$HOME/.pyenv/shims/python3" \
+              /usr/bin/python3; do
+    command -v "$cand" >/dev/null 2>&1 || continue
+    "$cand" -c "import sys" >/dev/null 2>&1 || continue
+    printf '%s\n' "$cand"; return 0
+  done
+  return 1
+}
+
+PY="$(find_python)" || {
+  echo "Python не найден. Установите:" >&2
+  echo "  xcode-select --install   # или" >&2
+  echo "  brew install python" >&2
+  exit 1
+}
+
+exec "$PY" "$DIR/mdgraph.py" "$@"
